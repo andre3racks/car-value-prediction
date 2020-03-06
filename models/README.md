@@ -1,4 +1,4 @@
-Hey guys, it's probably best for usability purposes to make sure we are building models similarily to each other.
+Hey guys, it's probably best for usability purposes to make sure we are building models similar to each other.
 Check out models/kmeans.py for an example.
 
 Some assumptions I made that I think should be present in all models:
