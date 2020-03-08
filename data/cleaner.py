@@ -254,6 +254,7 @@ def audi(model):
     return "NOTVALID"
 
 def bmw(model):
+    title = ""
     if model == "":
         return "NOTVALID"
 
@@ -261,17 +262,22 @@ def bmw(model):
     series_dictionary = ["1", "2", "3", "4", "5", "6", "7", "8"]
     for key in series_dictionary:
         if model[0].startswith(key):
-            return key + " SERIES"
+            title =  key
 
     other_dictionary = ["X1", "X2", "X3", "X4", "X5", "X6", "Z3", "Z4", "M2 PERFORMANCE", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "I3", "I8", "E3", "E4"]
     for key in other_dictionary:
         if key in model:
             if key == "E3":
-                return "3 SERIES"
+                title = "3"
             if key == "E4":
-                return "4 SERIES"
-            return key
-    return "NOTVALID"
+                title = "4"
+            title = key
+
+    series_return = ["1", "2", "3", "4", "5", "6", "7", "8", "X1", "X2", "X3", "X4", "X5", "X6", "Z3", "Z4", "M2 PERFORMANCE", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "I3", "I8", "E3", "E4"]
+    if title in series_return:
+        return series_return.index(title)
+    else:
+        return "NOTVALID"
 
 def buick(model):
     model = model.upper()
@@ -584,7 +590,8 @@ def clean_clean_data():
         csvreader = csv.reader(csvfile, delimiter=',')
         for row in csvreader:
             regular_row = regularize_data(row)
-            clean_data.append(regular_row)
+            if regular_row[3] == 4:
+                clean_data.append(regular_row)
     return clean_data
 
 def load_data_csv():
@@ -596,7 +603,8 @@ def load_data_csv():
                 cleanrows = cleanrows + 1
                 cur_row = [row[2], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[15], row[16], row[17], row[18], row[22]]
                 regular_row = regularize_data(cur_row)
-                clean_data.append(regular_row)
+                if regular_row[3] == 4:
+                    clean_data.append(regular_row)
     return clean_data
 
 def save_csv(clean_data):
