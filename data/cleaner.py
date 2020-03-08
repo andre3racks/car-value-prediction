@@ -2,17 +2,27 @@ import pandas as pd
 import csv
 
 def load_data():
-    columns = ['id', 'url', 'region', 'region_url', 'price', 'year', 'manufacturer', 'model', 'condition', 'cylinders', 'fuel', 'odometer', 'title_status', 'transmission', 'vin', 'drive', 'size', 'type', 'paint_color', 'image_url', 'description', 'county', 'state', 'lat', 'long']
-    feature_columns = ['region', 'year', 'price', 'manufacturer', 'model', 'condition', 'cylinders', 'fuel', 'odometer', 'title_status', 'transmission', 'vin', 'drive', 'size', 'type', 'paint_color', 'description', 'county', 'state']
+    columns = ['id', 'url', 'region', 'region_url', 'price', 'year',
+               'manufacturer', 'model', 'condition', 'cylinders', 'fuel',
+               'odometer', 'title_status', 'transmission', 'vin', 'drive',
+               'size', 'type', 'paint_color', 'image_url', 'description',
+               'county', 'state', 'lat', 'long']
+
+    feature_columns = ['region', 'year', 'price', 'manufacturer',
+                       'model', 'condition', 'cylinders', 'fuel', 'odometer',
+                       'title_status', 'transmission', 'vin', 'drive', 'size',
+                       'type', 'paint_color', 'description', 'county', 'state']
+
+
     data = pd.read_csv("./vehicles.csv", names=columns, delimiter=',')
     data.head()
 
     X = data[feature_columns]
     X_clean = []
     y_clean = []
-    for index, row in X.iterrows():
-        print (row["price"])
-        print(type(row))
+    # for index, row in X.iterrows():
+        # print (row["price"])
+        # print(type(row))
 
 # Don't implement for now, probably overspecific
 def city_index(city):
@@ -32,8 +42,14 @@ def make_index(make):
         return -1
     else:
         makeUpper = make.upper()
-        makes = ['ACURA', 'ALFA-ROMEO', 'ASTON-MARTIN', 'AUDI', 'BMW', 'BUICK', 'CADILLAC', 'CHEVROLET', 'CHRYSLER', 'DATSUN', 'DODGE', 'FERRARI', 'FIAT', 'FORD', 'GMC', 'HARLEY-DAVIDSON', 'HENNESSEY', 'HONDA', 'HYUNDAI', 'INFINITI', 'JAGUAR', 'JEEP', 'KIA', 'LAND ROVER', 'LEXUS', 'LINCOLN', 'MAZDA', 'MERCEDES-BENZ', 'MERCURY', 'MINI', 'MITSUBISHI', 'MORGAN', 'NISSAN', 'PONTIAC', 'PORCHE', 'RAM', 'ROVER', 'SATURN', 'SUBARU', 'TESLA', 'TOYOTA', 'VOLKSWAGEN', 'VOLVO']
+        makes = ['ACURA', 'ALFA-ROMEO', 'ASTON-MARTIN', 'AUDI', 'BMW', 'BUICK',
+                 'CADILLAC', 'CHEVROLET', 'CHRYSLER', 'DATSUN', 'DODGE', 'FERRARI', 'FIAT', 'FORD', 'GMC',
+                 'HARLEY-DAVIDSON', 'HENNESSEY', 'HONDA', 'HYUNDAI', 'INFINITI', 'JAGUAR', 'JEEP', 'KIA',
+                 'LAND ROVER', 'LEXUS', 'LINCOLN', 'MAZDA', 'MERCEDES-BENZ', 'MERCURY', 'MINI', 'MITSUBISHI',
+                 'MORGAN', 'NISSAN', 'PONTIAC', 'PORCHE', 'RAM', 'ROVER', 'SATURN', 'SUBARU', 'TESLA', 'TOYOTA',
+                 'VOLKSWAGEN', 'VOLVO']
         return makes.index(makeUpper)
+
 
 def condition_index(condition):
     if condition == "" or condition == None:
@@ -48,7 +64,8 @@ def cylinders_index(cylinder):
         return -1
     else:
         cylinderUpper = cylinder.upper()
-        cylinders = ['3 CYLINDERS', '4 CYLINDERS', '5 CYLINDERS', '6 CYLINDERS', '8 CYLINDERS', '10 CYLINDERS', '12 CYLINDERS', 'OTHER']
+        cylinders = ['3 CYLINDERS', '4 CYLINDERS', '5 CYLINDERS', '6 CYLINDERS',
+                     '8 CYLINDERS', '10 CYLINDERS', '12 CYLINDERS', 'OTHER']
         return cylinders.index(cylinderUpper)
 
 def gas_index(gas):
@@ -115,7 +132,13 @@ def state_index(state):
         return -1
     else:
         upper_state = state.upper()
-        states = ["AL","AK","AZ","AR","CA","CO","CT","DC","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"]
+        states = ["AL","AK","AZ","AR","CA","CO","CT","DC","DE",
+                  "FL","GA","HI","ID","IL","IN","IA","KS","KY",
+                  "LA","ME","MD","MA","MI","MN","MS","MO","MT",
+                  "NE","NV","NH","NJ","NM","NY","NC","ND","OH",
+                  "OK","OR","PA","RI","SC","SD","TN","TX","UT",
+                  "VT","VA","WA","WV","WI","WY"]
+
         return states.index(upper_state)
 
 def regularize_data(cur_row):
@@ -203,7 +226,10 @@ def alfa_romeo(model):
 
 def aston_martin(model):
     model = model.upper()
-    dictionary = ["DB11", "DB7 VANTAGE VOLANTE", "DB7 VANTAGE", "DB7", "DB9", "DBS SUPERLEGGARA", "DBS", "RAPIDE S", "RAPIDE", "VANTAGE V12" "VANTAGE V8", "VANTAGE V8 S", "VANQUISH", "VANQUISH S", "VANTAGE S", "VANTAGE"]
+    dictionary = ["DB11", "DB7 VANTAGE VOLANTE", "DB7 VANTAGE", "DB7",
+                  "DB9", "DBS SUPERLEGGARA", "DBS", "RAPIDE S", "RAPIDE",
+                  "VANTAGE V12" "VANTAGE V8", "VANTAGE V8 S", "VANQUISH",
+                  "VANQUISH S", "VANTAGE S", "VANTAGE"]
     for key in dictionary:
         if key in model:
             return key
@@ -262,8 +288,228 @@ def buick(model):
                 return "LESABRE"
             return key
 
-    print(model)
+    # print("Model is: ", model)
     return "NOTVALID"
+
+
+
+def volvo(model):
+    model = model.upper()
+    dictionary = ['C30', 'C70', 'S40', 'S60', 'S60 Cross Country'
+                  'S70', 'S80', 'S90', 'V40', 'V50', 'V60', 'V60 Cross Country'
+                  'V70', 'V90', 'V90 Cross Country', 'XC40', 'XC60', 'XC70',
+                  'XC90', 'XC90 Hybrid']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return "NOTVALID"
+
+
+
+
+
+def volkswagen(model):
+    model = model.upper()
+    count = 0
+    counttoo = 0
+    dictionary = ['Arteon', 'Atlas', 'Atlas Cross Sport', 'Beetle', 'Beetle Convertible'
+                  'Beetle Coupe', "Cabrio", 'CC', 'City Golf', 'City Jetta'
+                  'E-Golf', 'Eos', 'Eurovan', 'GLI', 'Golf', 'Golf Alltrack'
+                  'Golf R', 'Golf SportWagen', 'Golf Wagon', 'GTI', 'Jetta'
+                  'Jetta GLI', 'Jetta Sedan', 'Jetta Wagon', 'New Beetle',
+                  'New Beetle Convertible', 'New Beetle Coupe', 'Passat'
+                  'PASSAT CC', 'Passat Wagon', 'Phaeton', 'Rabbit', 'Routan'
+                  'Tiguan', 'Touareg', 'Toureg 2']
+
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return "NOTVALID"
+
+def toyota(model):
+    model = model.upper()
+    dictionary = ['4RUNNER', '86', 'AVALON', 'CAMRY', 'CAMRY HYBRID', 'CAMRY SOLORA'
+                  'CELICA', 'C-HR', 'COROLLA', 'COROLLA HATCHBACK', 'COROLLA IM',
+                  'ECHO', 'FJ CRUISER', 'GR SUPRA', 'HIGHLANDER', 'HIGHLANDER HYBRID'
+                  'MATRIX', 'MIRAI', 'PRIUS', 'PRIUS C', 'PRIUS PLUG-IN', 'PRIUS PRIME'
+                  'PRIUS V', 'RAV4', 'RAV4 HYBRID', 'SEQUOIA', 'SIENNA', 'TACOMA'
+                  'TUNDRA', 'VENZA', 'YARIS']
+    for key in dictionary:
+        if key in model:
+            return key
+
+
+    return 'NOTVALID'
+
+def tesla(model):
+    model = model.upper()
+    dictionary = ['MODEL 3', 'MODEL S', 'MODEL X']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def subaru(model):
+    model = model.upper()
+    dictionary = ['ASCENT', 'B9 TRIBECA', 'BAJA', 'BRZ', 'CROSSTREK',
+                  'CROSSTREK PLUG-IN HYBRID', 'FORESTER', 'IMPREZA', 'IMPREZA WRX',
+                  'LEGACY', 'OUTBACK', 'TRIBECA', 'WRX', 'XV CROSSTREK','XV CROSSTREK-HYBRID']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+
+
+
+def saturn(model):
+    model = model.upper()
+    dictionary = ['ASTRA', 'AURA', 'ION', 'L SERIES SEDAN', 'L SERIES WAGON', 'LS'
+                  'LS 4DR SEDAN', 'LW', 'LW 4DR WAGON', 'OUTLOOK', 'RELAY'
+                  'SC1', 'SKY', 'SL', 'SW 4DR WAGON', 'VUE']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def rover(model):
+    model = model.upper()
+    dictionary = ['']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def ram(model):
+    model = model.upper()
+    dictionary = ['1500', '1500 CLASSIC', '2500', '3500', '4500', '5500'
+                  'CARGO VAN', 'DAKOTA', 'PROMASTER', 'PROMASTER CARGO VAN'
+                  'PROMASTER CHASIS CAB', 'PROMASTER CITY', 'PROMASTER CITY WAGON'
+                  'PROMASTER CUTAWAY', 'PROMASTER WINDOW VAN', 'RAM 4500 CAB-CHASSIS'
+                  'RAM 5500 CAB-CHASSIS']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def porche(model):
+    model = model.upper()
+    dictionary = ['718 BOXTER', '718 CAYMAN', '718 SPYDER', '911'
+                  '918 SPYDER', 'BOXTER', 'CAYENNE', 'CAYMAN', 'MACAN'
+                  'PANAMERA', 'TAYCAN']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def pontiac(model):
+    model = model.upper()
+    dictionary = ['AZTAK', 'BONNEVILLE', 'FIREBIRD', 'FIREFLY', 'G3',
+                  'G3 WAVE', 'G5', 'G5 PURSUIT', 'G6', 'G8', 'GRAND AM'
+                  'GRAND PRIX', 'MONTANA', 'MONTANA SV6', 'PURSUIT', 'SOLSTICE',
+                  'SUNFIRE', 'TORRENT', 'VIBE', 'WAVE']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def nissan(model):
+    model = model.upper()
+    dictionary = ['350Z', '370Z', '370Z ROADSTER', 'ALTIMA', 'ARMADA'
+                  'CUBE', 'FRONTIER', 'GT-R', 'JUKE', 'KICKS', 'LEAF',
+                  'MAXIMA', 'MICRA', 'MURANO', 'NV', 'NV CARGO', 'NV200'
+                  'PATHFINDER', 'PATHFINDER ARMADA', 'QASHQAI', 'QUEST'
+                  'ROGUE', 'SENTRA' , 'TITAN', 'TITAN XD', 'VERSA', 'VERSA NOTE'
+                  'XTERRA', 'X-TRAIL']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def morgan(model):
+    model = model.upper()
+    dictionary = ['']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+
+def mitsubishi(model):
+    model = model.upper()
+    dictionary = ['DIAMANTE', 'ECLIPSE', 'ECLIPSE CROSS', 'ENDEAVOR',
+                  'GALANT', 'I-MIEV', 'LANCER', 'LANCER EVOLUTION'
+                  'LANCER SPORTBACK', 'MIRAGE', 'MIRAGE 64', 'MONTERO',
+                  'MONTERO SPORT', 'OUTLANDER', 'OUTLANDER PHEV', 'RVR']
+
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+
+def mini(model):
+    model = model.upper()
+    dictionary = ['3 DOOR', '5 DOOR', 'CLUBMAN', 'CONVERTIBLE', 'COOPER'
+                  'COOPER CLUBMAN', 'COOPER CLUBVAN', 'COOPER CONVERTIBLE',
+                  'COOPER COUPE', 'COOPER HARDTOP', 'COOPER PACEMAN', 'COOPER ROADSTER'
+                  'COUNTRYMAN']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def mercury(model):
+    model = model.upper()
+    dictionary = ['COUGAR', 'GRAND MARQUIS', 'MARAUDER']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+
+
+def mercedez(model):
+    model = model.upper()
+    dictionary = ['A-CLASS', 'AMG GT', 'B-CLASS', 'C-CLASS', 'CLA-CLASS',
+                  'CL-CLASS', 'CLK-CLASS', 'CLS-CLASS', 'E-CLASS', 'G-CLASS'
+                  'GLA-CLASS', 'GLB', 'GLC', 'GLC-CLASS', 'GL-CLASS', 'GLE-CLASS',
+                  'GLA-CLASS', 'GLB', 'GLC', 'GLC-CLASS', 'GL-CLASS', 'GLE-CLASS'
+                  'GLK-CLASS', 'GLS', 'M-CLASS', 'METRIS CARGO VAN', 'METRIS PASSENGER VAN'
+                  'R-CLASS', 'S-CLASS', 'SLC', 'SL-CLASS', 'SLK', 'SLK-CLASS', 'SLS AMG'
+                  'SPRINTER', 'SPRINTER CAB CHASSIS', 'SPRINTER CARGO VAN', 'SPRINTER CREW VAN'
+                  'SPRINTER PASSENGER VAN']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
+
+def mazda(model):
+    model = model.upper()
+    dictionary = ['626', 'B2300', 'B-SERIES', 'CX-3', 'CX-30', 'CX-5', 'CX-7'
+                  'CX-9', 'MAZDA2', 'MAZDA3', 'MAZDA3 SPORT', 'MAZDA5', 'MAZDA6'
+                  'MILLENIA', 'MPV', 'MX-5', 'MX-5 RF', 'PROTEGE', 'PROTEGE5',
+                  'RX-8', 'TRIBUTE']
+    for key in dictionary:
+        if key in model:
+            return key
+
+    return 'NOTVALID'
 
 
 def model_index(makeIndex, model):
@@ -279,6 +525,40 @@ def model_index(makeIndex, model):
         return bmw(model)
     if makeIndex == 5:
         return buick(model)
+    if makeIndex == 26:
+        return mazda(model)
+    if makeIndex == 27:
+        return mercedez(model)
+    if makeIndex == 28:
+        return mercury(model)
+    if makeIndex == 29:
+        return mini(model)
+    if makeIndex == 30:
+        return mitsubishi(model)
+    if makeIndex == 31:
+        return morgan(model)
+    if makeIndex == 32:
+        return nissan(model)
+    if makeIndex==33:
+        return pontiac(model)
+    if makeIndex == 34:
+        return porche(model)
+    if makeIndex == 35:
+        return ram(model)
+    if makeIndex == 36:
+        return rover(model)
+    if makeIndex == 37:
+        return saturn(model)
+    if makeIndex == 38:
+        return subaru(model)
+    if makeIndex == 39:
+        return tesla(model)
+    if makeIndex == 40:
+        return toyota(model)
+    if makeIndex == 41:
+        return volkswagen(model)
+    if makeIndex == 42:
+        return volvo(model)
     else:
         return "Model"
 
