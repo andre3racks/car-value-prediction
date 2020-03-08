@@ -1,5 +1,9 @@
 from sklearn.cluster import KMeans
 import clean_sample_data
+import sys
+sys.path.append('../')
+from data.data_loader import get_splits
+from utils.plot import plot_2D
 
 def k_means_cluster(data, k, max_iter=300, alg='auto'):
     
@@ -18,7 +22,7 @@ def k_means_cluster(data, k, max_iter=300, alg='auto'):
     # find average price of each cluster from list
     print("finding averages")
     average_prices_of_categories = average_price_of_clusters(list_prices_of_categories)
-    print(average_prices_of_categories)
+    # print(average_prices_of_categories)
     assert len(average_prices_of_categories) == k, "average prices contains too many values"
     # find average percentage difference between cluster average prices and test/train labels
     print("calculating error")
@@ -27,8 +31,8 @@ def k_means_cluster(data, k, max_iter=300, alg='auto'):
 
     scores = {}
 
-    scores['test'] = 1-test_err
-    scores['train'] = 1-train_err
+    scores['test'] = test_err*100
+    scores['train'] = train_err*100
 
     return scores
     
@@ -83,15 +87,39 @@ def find_err(average_prices_of_categories, cluster_assignments, labels):
         # iloc change for pandas
         actual_price = labels.iloc[i]
 
+        # print("actual: {}; estimation: {}".format(actual_price, cluster_price))
+
         # find percentage off loss
-        loss_sum += abs(cluster_price-actual_price) / actual_price
+        percentage = abs(cluster_price-actual_price) / actual_price
+        # print("percentage loss: {}".format(percentage))
+        # if percentage > 10:
+        #     print("percentage: {} wayyy offf!!".format(percentage))
+        loss_sum += percentage
 
-
+    # print("loss sum: {}".format(loss_sum))
     return loss_sum/len(cluster_assignments)
+
+
+def progress_report(data):
+    ks = []
+    test_errs = []
+    train_errs = []
+
+    for k in range(10, 610, 50):
+        scores = k_means_cluster(data, k, max_iter=300)
+        ks.append(k)
+        test_errs.append(scores['test'])
+        train_errs.append(scores['train'])
+    
+    plot_2D("kmeans performance varying K", "K", "Error %", test_errs, train_errs, ks)
+
 
 
 # debug purposes
 if __name__ == "__main__":
-    data = clean_sample_data.get_clean_sample_data()
-    print(k_means_cluster(data, 8, max_iter=1))
+    data = get_splits("../data/vehicles_cleaner.csv", 0.2)
+    if data is not None:
+        # print(data['X_train'])
+        # print(k_means_cluster(data, 500, max_iter=300))
+        progress_report(data)
     pass
