@@ -31,8 +31,8 @@ def k_means_cluster(data, k, max_iter=300, alg='auto'):
 
     scores = {}
 
-    scores['test'] = test_err*100
-    scores['train'] = train_err*100
+    scores['test'] = test_err
+    scores['train'] = train_err
 
     return scores
     
@@ -78,7 +78,9 @@ def average_price_of_clusters(average_prices_of_categories):
 
 def find_err(average_prices_of_categories, cluster_assignments, labels):
 
-    loss_sum = 0
+    prev_avg = 0
+    current_average = 0
+    num_exs_so_far = 1
 
     for i in range(len(cluster_assignments)):
         # for each cluster assignment, calculate difference between prediction and label
@@ -90,14 +92,14 @@ def find_err(average_prices_of_categories, cluster_assignments, labels):
         # print("actual: {}; estimation: {}".format(actual_price, cluster_price))
 
         # find percentage off loss
-        percentage = abs(cluster_price-actual_price) / actual_price
-        # print("percentage loss: {}".format(percentage))
-        # if percentage > 10:
-        #     print("percentage: {} wayyy offf!!".format(percentage))
-        loss_sum += percentage
+        difference = abs(cluster_price-actual_price)
+
+        current_average = prev_avg*(num_exs_so_far-1)/(num_exs_so_far) + difference/num_exs_so_far
+        prev_avg = current_average
+        num_exs_so_far += 1
 
     # print("loss sum: {}".format(loss_sum))
-    return loss_sum/len(cluster_assignments)
+    return current_average
 
 
 def progress_report(data):
@@ -111,7 +113,7 @@ def progress_report(data):
         test_errs.append(scores['test'])
         train_errs.append(scores['train'])
     
-    plot_2D("kmeans performance varying K", "K", "Error %", test_errs, train_errs, ks)
+    plot_2D("kmeans performance varying K", "K", "Error in dollars", test_errs, train_errs, ks)
 
 
 
