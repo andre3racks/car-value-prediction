@@ -4,7 +4,7 @@ vehicle_data = pd.read_csv("./data/vehicles_clean.csv", names=feature_columns, d
 encoder = OneHopEncode(vehicle_data)
 print(encoder.encode('manufacturer').head())
 """
-class OneHopEncode:
+class OneHotEncoder:
     def __init__(self, data):
         #data is a pandas DataFrame
         self.data = data
