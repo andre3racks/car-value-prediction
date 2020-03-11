@@ -11,7 +11,7 @@ clean_data = MakeAndModelCleaner(vehicle_data, './data/mappings/model_mappings.j
 
 print(clean_data)
 '''
-class MakeAndModelCleaner:
+class MakeAndModelNormalizer:
     def __init__(self, data, mapping_path):
         self.data = data
         

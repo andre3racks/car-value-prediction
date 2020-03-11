@@ -1,35 +1,15 @@
 import pandas as pd
 import csv
 
-from make_and_model_cleaner import MakeAndModelCleaner
-from one_hot_encoder import OneHotEncoder
-
-def load_data():
-    columns = ['id', 'url', 'region', 'region_url', 'price', 'year',
-               'manufacturer', 'model', 'condition', 'cylinders', 'fuel',
-               'odometer', 'title_status', 'transmission', 'vin', 'drive',
-               'size', 'type', 'paint_color', 'image_url', 'description',
-               'county', 'state', 'lat', 'long']
+from make_and_model_cleaner import MakeAndModelNormalizer
+from encoders.one_hot_encoder import OneHotEncoder
 
     feature_columns = ['region', 'year', 'price', 'manufacturer',
                        'model', 'condition', 'cylinders', 'fuel', 'odometer',
                        'title_status', 'transmission', 'vin', 'drive', 'size',
                        'type', 'paint_color', 'description', 'county', 'state']
 
-
-    data = pd.read_csv("./vehicles.csv", names=columns, delimiter=',')
-    data.head()
-
-    X = data[feature_columns]
-    X_clean = []
-    y_clean = []
-    # for index, row in X.iterrows():
-        # print (row["price"])
-        # print(type(row))
-
 # Don't implement for now, probably overspecific
-def city_index(city):
-    return city
 
 def price_regularize(price):
     return price
@@ -193,7 +173,6 @@ def save_csv(clean_data):
             csvwriter.writerow(row)
 
 def main():
-    #clean_data = load_data_csv()
     cleaner_data = clean_clean_data()
     save_csv(cleaner_data)
     #model_list()
