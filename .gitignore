@@ -1,0 +1,6 @@
+!data/vehicleCSV.zip
+data/csv/*
+
+.vscode/*
+
+__pycache__

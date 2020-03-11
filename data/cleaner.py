@@ -374,8 +374,8 @@ def subaru(model):
 
 def saturn(model):
     model = model.upper()
-    dictionary = ['ASTRA', 'AURA', 'ION', 'L SERIES SEDAN', 'L SERIES WAGON', 'LS'
-                  'LS 4DR SEDAN', 'LW', 'LW 4DR WAGON', 'OUTLOOK', 'RELAY'
+    dictionary = ['ASTRA', 'AURA', 'ION', 'L SERIES SEDAN', 'L SERIES WAGON', 'LS',
+                  'LS 4DR SEDAN', 'LW', 'LW 4DR WAGON', 'OUTLOOK', 'RELAY',
                   'SC1', 'SKY', 'SL', 'SW 4DR WAGON', 'VUE']
     for key in dictionary:
         if key in model:
@@ -407,8 +407,8 @@ def ram(model):
 
 def porche(model):
     model = model.upper()
-    dictionary = ['718 BOXTER', '718 CAYMAN', '718 SPYDER', '911'
-                  '918 SPYDER', 'BOXTER', 'CAYENNE', 'CAYMAN', 'MACAN'
+    dictionary = ['718 BOXTER', '718 CAYMAN', '718 SPYDER', '911',
+                  '918 SPYDER', 'BOXTER', 'CAYENNE', 'CAYMAN', 'MACAN',
                   'PANAMERA', 'TAYCAN']
     for key in dictionary:
         if key in model:
@@ -419,7 +419,7 @@ def porche(model):
 def pontiac(model):
     model = model.upper()
     dictionary = ['AZTAK', 'BONNEVILLE', 'FIREBIRD', 'FIREFLY', 'G3',
-                  'G3 WAVE', 'G5', 'G5 PURSUIT', 'G6', 'G8', 'GRAND AM'
+                  'G3 WAVE', 'G5', 'G5 PURSUIT', 'G6', 'G8', 'GRAND AM',
                   'GRAND PRIX', 'MONTANA', 'MONTANA SV6', 'PURSUIT', 'SOLSTICE',
                   'SUNFIRE', 'TORRENT', 'VIBE', 'WAVE']
     for key in dictionary:
@@ -430,11 +430,11 @@ def pontiac(model):
 
 def nissan(model):
     model = model.upper()
-    dictionary = ['350Z', '370Z', '370Z ROADSTER', 'ALTIMA', 'ARMADA'
+    dictionary = ['350Z', '370Z', '370Z ROADSTER', 'ALTIMA', 'ARMADA',
                   'CUBE', 'FRONTIER', 'GT-R', 'JUKE', 'KICKS', 'LEAF',
-                  'MAXIMA', 'MICRA', 'MURANO', 'NV', 'NV CARGO', 'NV200'
-                  'PATHFINDER', 'PATHFINDER ARMADA', 'QASHQAI', 'QUEST'
-                  'ROGUE', 'SENTRA' , 'TITAN', 'TITAN XD', 'VERSA', 'VERSA NOTE'
+                  'MAXIMA', 'MICRA', 'MURANO', 'NV', 'NV CARGO', 'NV200',
+                  'PATHFINDER', 'PATHFINDER ARMADA', 'QASHQAI', 'QUEST',
+                  'ROGUE', 'SENTRA' , 'TITAN', 'TITAN XD', 'VERSA', 'VERSA NOTE',
                   'XTERRA', 'X-TRAIL']
     for key in dictionary:
         if key in model:
