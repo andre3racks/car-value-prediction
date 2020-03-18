@@ -1,15 +1,9 @@
 import pandas as pd
 import csv
+import numpy as np
 
-from make_and_model_cleaner import MakeAndModelNormalizer
+from normalizers.make_and_model_cleaner import MakeAndModelNormalizer
 from encoders.one_hot_encoder import OneHotEncoder
-
-    feature_columns = ['region', 'year', 'price', 'manufacturer',
-                       'model', 'condition', 'cylinders', 'fuel', 'odometer',
-                       'title_status', 'transmission', 'vin', 'drive', 'size',
-                       'type', 'paint_color', 'description', 'county', 'state']
-
-# Don't implement for now, probably overspecific
 
 def price_regularize(price):
     return price
@@ -25,123 +19,142 @@ def make_index(make):
         return -1
     else:
         makeUpper = make.upper()
-        makes = ['ACURA', 'ALFA-ROMEO', 'ASTON-MARTIN', 'AUDI', 'BMW', 'BUICK',
-                 'CADILLAC', 'CHEVROLET', 'CHRYSLER', 'DATSUN', 'DODGE', 'FERRARI', 'FIAT', 'FORD', 'GMC',
-                 'HARLEY-DAVIDSON', 'HENNESSEY', 'HONDA', 'HYUNDAI', 'INFINITI', 'JAGUAR', 'JEEP', 'KIA',
-                 'LAND ROVER', 'LEXUS', 'LINCOLN', 'MAZDA', 'MERCEDES-BENZ', 'MERCURY', 'MINI', 'MITSUBISHI',
-                 'MORGAN', 'NISSAN', 'PONTIAC', 'PORCHE', 'RAM', 'ROVER', 'SATURN', 'SUBARU', 'TESLA', 'TOYOTA',
-                 'VOLKSWAGEN', 'VOLVO']
+        makes = ['ACURA', 'ALFA-ROMEO', 'ASTON-MARTIN', 'AUDI', 'BMW', 'BUICK', 'CADILLAC', 'CHEVROLET', 'CHRYSLER', 'DATSUN', 'DODGE', 'FERRARI', 'FIAT', 'FORD', 'GMC', 'HARLEY-DAVIDSON', 'HENNESSEY', 'HONDA', 'HYUNDAI', 'INFINITI', 'JAGUAR', 'JEEP', 'KIA', 'LAND ROVER', 'LEXUS', 'LINCOLN', 'MAZDA', 'MERCEDES-BENZ', 'MERCURY', 'MINI', 'MITSUBISHI', 'MORGAN', 'NISSAN', 'PONTIAC', 'PORCHE', 'RAM', 'ROVER', 'SATURN', 'SUBARU', 'TESLA', 'TOYOTA', 'VOLKSWAGEN', 'VOLVO']
         return makes.index(makeUpper)
 
-
 def condition_index(condition):
-    if condition == "" or condition == None:
-        return -1
+    conditionUpper = condition.upper()
+    conditions = ['NEW', 'LIKE NEW', 'EXCELLENT', 'GOOD', 'FAIR', 'SALVAGE']
+    if conditionUpper in conditions:
+        return conditionUpper
     else:
-        conditionUpper = condition.upper()
-        conditions = ['NEW', 'LIKE NEW', 'EXCELLENT', 'GOOD', 'FAIR', 'SALVAGE']
-        return conditions.index(conditionUpper)
+        return -1
 
 def cylinders_index(cylinder):
-    if cylinder == "" or cylinder == None:
-        return -1
+    cylinderUpper = cylinder.upper()
+    cylinders = ['3 CYLINDERS', '4 CYLINDERS', '5 CYLINDERS', '6 CYLINDERS', '8 CYLINDERS', '10 CYLINDERS', '12 CYLINDERS', 'OTHER']
+    if cylinderUpper in cylinders:
+        return cylinderUpper
     else:
-        cylinderUpper = cylinder.upper()
-        cylinders = ['3 CYLINDERS', '4 CYLINDERS', '5 CYLINDERS', '6 CYLINDERS',
-                     '8 CYLINDERS', '10 CYLINDERS', '12 CYLINDERS', 'OTHER']
-        return cylinders.index(cylinderUpper)
+        return -1
+
 
 def gas_index(gas):
-    if gas == "" or gas == None:
-        return -1
+    gasUpper = gas.upper()
+    gasTypes = ['GAS', 'DIESEL', 'OTHER', 'ELECTRIC', 'HYBRID']
+    if gasUpper in gasTypes:
+        return gasUpper
     else:
-        gasUpper = gas.upper()
-        gasTypes = ['GAS', 'DIESEL', 'OTHER', 'ELECTRIC', 'HYBRID']
-        return gasTypes.index(gasUpper)
+        return -1
 
 def odometer_regularize(odometer):
     return odometer
 
 def title_index(title):
-    if title == "" or title == None:
-        return -1
+    titleUpper = title.upper()
+    titles = ['CLEAN', 'REBUILT', 'SALVAGE', 'LIEN', 'MISSING', 'PARTS ONLY']
+    if titleUpper in titles:
+        return titleUpper
     else:
-        titleUpper = title.upper()
-        titles = ['CLEAN', 'REBUILT', 'SALVAGE', 'LIEN', 'MISSING', 'PARTS ONLY']
-        return titles.index(titleUpper)
+        return -1
 
 def transmission_index(transmission):
-    if transmission == "" or transmission == None:
-        return -1
+    transmissionUpper = transmission.upper()
+    transmissions = ['MANUAL', 'AUTOMATIC', 'OTHER']
+    if transmissionUpper in transmissions:
+        return transmissionUpper
     else:
-        transmissionUpper = transmission.upper()
-        transmissions = ['MANUAL', 'AUTOMATIC', 'OTHER']
-        return transmissions.index(transmissionUpper)
+        return -1
 
 def drive_index(drive):
-    if drive == "" or drive == None:
-        return -1
+    driveUpper = drive.upper()
+    drives = ['4WD', 'FWD', 'RWD']
+    if driveUpper in drives:
+        return driveUpper
     else:
-        driveUpper = drive.upper()
-        drives = ['4WD', 'FWD', 'RWD']
-        return drives.index(driveUpper)
+        return -1
 
 def size_index(size):
-    if size == "" or size == None:
-        return -1
+    sizeUpper = size.upper()
+    sizes = ['COMPACT', 'SUB-COMPACT', 'MID-SIZE', 'FULL-SIZE']
+    if sizeUpper in sizes:
+        return sizeUpper
     else:
-        sizeUpper = size.upper()
-        sizes = ['COMPACT', 'MID-SIZE', 'FULL-SIZE', 'SUB-COMPACT']
-        return sizes.index(sizeUpper)
+        return -1
 
 def type_index(typee):
-    if typee == "" or typee == None:
-        return -1
+    typeUpper = typee.upper()
+    types = ['HATCHBACK', 'PICKUP', 'SUV', 'SEDAN', 'TRUCK', 'WAGON', 'VAN', 'COUPE', 'CONVERTIBLE', 'OTHER', 'OFFROAD', 'MINI-VAN', 'BUS']
+    if typeUpper in types:
+        return typeUpper
     else:
-        typeUpper = typee.upper()
-        types = ['HATCHBACK', 'PICKUP', 'SUV', 'SEDAN', 'TRUCK', 'WAGON', 'VAN', 'COUPE', 'CONVERTIBLE', 'OTHER', 'OFFROAD', 'MINI-VAN', 'BUS']
-        return types.index(typeUpper)
+        return -1
 
 def color_index(color):
-    if color == "" or color == None:
-        return -1
+    colorUpper = color.upper()
+    colors = ['BLACK', 'WHITE', 'SILVER', 'BROWN', 'BLUE', 'GREY', 'RED', 'CUSTOM', 'PURPLE', 'YELLOW', 'GREEN', 'ORANGE']
+    if colorUpper in colors:
+        return colorUpper
     else:
-        colorUpper = color.upper()
-        colors = ['BLACK', 'WHITE', 'SILVER', 'BROWN', 'BLUE', 'GREY', 'RED', 'CUSTOM', 'PURPLE', 'YELLOW', 'GREEN', 'ORANGE']
-        return colors.index(colorUpper)
+        return -1
 
 def state_index(state):
-    if state == "" or state == None:
-        return -1
+    upperState = state.upper()
+    states = ["AL","AK","AZ","AR","CA","CO","CT","DC","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"]
+    if upperState in states:
+        return upperState
     else:
-        upper_state = state.upper()
-        states = ["AL","AK","AZ","AR","CA","CO","CT","DC","DE",
-                  "FL","GA","HI","ID","IL","IN","IA","KS","KY",
-                  "LA","ME","MD","MA","MI","MN","MS","MO","MT",
-                  "NE","NV","NH","NJ","NM","NY","NC","ND","OH",
-                  "OK","OR","PA","RI","SC","SD","TN","TX","UT",
-                  "VT","VA","WA","WV","WI","WY"]
-
-        return states.index(upper_state)
+        return -1
 
 def regularize_data(cur_row):
-    cur_row[0] = city_index(cur_row[0])# City
-    cur_row[1] = price_regularize(cur_row[1])# Price
-    cur_row[2] = regularize_year(cur_row[2]) # Change year to number of years old
-    cur_row[3] = make_index(cur_row[3]) # Change make of car to number
-    cur_row[4] = model_index(cur_row[3], cur_row[4]) # Change model of car to number
-    cur_row[5] = condition_index(cur_row[5])# Condition
-    cur_row[6] = cylinders_index(cur_row[6])# Cylinders
-    cur_row[7] = gas_index(cur_row[7])# Gas type
-    cur_row[8] = odometer_regularize(cur_row[8])# Odometer
-    cur_row[9] = title_index(cur_row[9])# Title Status
-    cur_row[10] = transmission_index(cur_row[10])# Transmission (Manual/Auto)
-    cur_row[11] = drive_index(cur_row[11])# Drive (4wd, fwd, rwd)
-    cur_row[12] = size_index(cur_row[12])# Size
-    cur_row[13] = type_index(cur_row[13])# Type
-    cur_row[14] = color_index(cur_row[14])# Color
-    cur_row[15] = state_index(cur_row[15]) # State
+    cur_row[0] = price_regularize(cur_row[0])# Price
+    cur_row[1] = regularize_year(cur_row[1]) # Change year to number of years old
+    cur_row[2] = make_index(cur_row[2]) # Change make of car to number
+    cur_row[3] = cur_row[3] # Change model of car to number
+    cur_row[4] = condition_index(cur_row[4])# Condition
+    cur_row[5] = cylinders_index(cur_row[5])# Cylinders
+    cur_row[6] = gas_index(cur_row[6])# Gas type
+    cur_row[7] = odometer_regularize(cur_row[7])# Odometer
+    cur_row[8] = title_index(cur_row[8])# Title Status
+    cur_row[9] = transmission_index(cur_row[9])# Transmission (Manual/Auto)
+    cur_row[10] = drive_index(cur_row[10])# Drive (4wd, fwd, rwd)
+    cur_row[11] = size_index(cur_row[11])# Size
+    cur_row[12] = type_index(cur_row[12])# Type
+    cur_row[13] = color_index(cur_row[13])# Color
+    cur_row[14] = state_index(cur_row[14]) # State
     return cur_row
+
+def model_index(makeIndex, model):
+    if makeIndex == 0:
+        return acura(model)
+    if makeIndex == 1:
+        return alfa_romeo(model)
+    if makeIndex == 2:
+        return aston_martin(model)
+    if makeIndex == 3:
+        return audi(model)
+    if makeIndex == 4:
+        return bmw(model)
+    if makeIndex == 5:
+        return buick(model)
+    else:
+        return "Model"
+
+def model_list():
+    models = []
+    trimmed_models = []
+    for i in range(43):
+        models.append([])
+        trimmed_models.append([])
+
+    with open('vehicles_clean.csv') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=',')
+        for row in csvreader:
+            makeIndex = make_index(row[3].upper())
+            if makeIndex != -1:
+                if row[4] not in models[makeIndex]:
+                    models[makeIndex].append(row[4])
+
 
 def clean_clean_data():
     clean_data = []
@@ -149,32 +162,52 @@ def clean_clean_data():
         csvreader = csv.reader(csvfile, delimiter=',')
         for row in csvreader:
             regular_row = regularize_data(row)
-            if regular_row[3] == 4:
-                clean_data.append(regular_row)
+            clean_data.append(regular_row)
     return clean_data
 
 def load_data_csv():
     clean_data = []
-    with open('vehicles_clean.csv') as csvfile:
+    with open('vehicles.csv') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
         for row in csvreader:
             if int(row[4]) > 0:
-                cleanrows = cleanrows + 1
-                cur_row = [row[2], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[15], row[16], row[17], row[18], row[22]]
+                cur_row = [row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[15], row[16], row[17], row[18], row[22]]
                 regular_row = regularize_data(cur_row)
-                if regular_row[3] == 4:
-                    clean_data.append(regular_row)
+                clean_data.append(regular_row)
     return clean_data
 
 def save_csv(clean_data):
-    with open('vehicles_cleaner.csv','w') as cleanfile:
+    with open('vehicles_clean.csv','w') as cleanfile:
         csvwriter = csv.writer(cleanfile)
         for row in clean_data:
             csvwriter.writerow(row)
 
+def drop_nan_rows(df, columns):
+    for column in columns:
+        df = df[df[column].notna()]
+    return df
+
+def model_cleanup():
+    feature_columns = ['price', 'year', 'manufacturer',
+                           'model', 'condition', 'cylinders', 'fuel', 'odometer',
+                           'title_status', 'transmission', 'drive', 'size',
+                           'type', 'paint_color', 'state']
+
+    df = pd.read_csv('vehicles_clean.csv', names=feature_columns, delimiter=',')
+
+
+    #Remove columns that aren't useful
+    df = df.drop(columns=['size']) #lose 2/3 of data if "size" is included
+
+    # #Normalize Rows (Drop row with NaN values if needed)
+    df = drop_nan_rows(df, ['manufacturer', 'model', 'year', 'price', 'odometer'])
+    df = MakeAndModelNormalizer(df, 'normalizers/mappings/model_mappings.json').normalize() # only 10% of models don't match!
+    df.to_csv('vehicles_cleaner.csv')
+
+
 def main():
-    cleaner_data = clean_clean_data()
-    save_csv(cleaner_data)
-    #model_list()
+    clean_data = load_data_csv()
+    save_csv(clean_data)
+    model_cleanup()
 
 main()
