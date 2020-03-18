@@ -167,16 +167,24 @@ def model_cleanup():
 
     #Remove columns that aren't useful
     df = df.drop(columns=['size']) #lose 2/3 of data if "size" is included
-
     # #Normalize Rows (Drop row with NaN values if needed)
     df = drop_nan_rows(df, ['manufacturer', 'model', 'year', 'price', 'odometer'])
     df = MakeAndModelNormalizer(df, 'normalizers/mappings/model_mappings.json').normalize() # only 10% of models don't match!
     df.to_csv('vehicles_cleaner.csv')
+    return df
 
 
 def main():
     clean_data = load_data_csv()
     save_csv(clean_data)
-    model_cleanup()
+    df = model_cleanup()
+
+    # Drop NaN, -1, 'other' values first
+    #This is the One Hot encoding. Does all string valued columns. Should probably Drop NaN, -1, 
+    # 'other' values and amke things scalar that we want to be scalar
+    # http://queirozf.com/entries/one-hot-encoding-a-feature-on-a-pandas-dataframe-an-example
+    df = pd.get_dummies(df)
+
+    df.to_csv('vehicles_clean_encoded.csv')
 
 main()
