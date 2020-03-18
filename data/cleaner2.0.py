@@ -44,7 +44,7 @@ def main():
                        'title_status', 'transmission', 'drive', 'size',
                        'type', 'paint_color', 'description', 'county', 'state']
 
-    df = pd.read_csv('data/csv/vehicles_clean.csv', names=feature_columns, delimiter=',')
+    df = pd.read_csv('csv/vehicles_clean.csv', names=feature_columns, delimiter=',')
     
     
     #Remove columns that aren't useful
@@ -54,7 +54,7 @@ def main():
     # #Normalize Rows (Drop row with NaN values if needed)
     df = drop_nan_rows(df, ['manufacturer', 'model', 'year', 'price', 'odometer'])
 
-    # df = MakeAndModelNormalizer(df, 'data/normalizers/mappings/model_mappings.json').normalize() # only 10% of models don't match!
+    df = MakeAndModelNormalizer(df, 'normalizers/mappings/model_mappings.json').normalize() # only 10% of models don't match!
 
     # #One Hot Encode Categorical Columns
     # OneHotEncoder(df).encode(['manufacturer', 'model']) # Need to add more categorical data

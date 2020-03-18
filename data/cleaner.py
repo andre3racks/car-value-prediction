@@ -109,7 +109,7 @@ def state_index(state):
 def regularize_data(cur_row):
     cur_row[0] = price_regularize(cur_row[0])# Price
     cur_row[1] = regularize_year(cur_row[1]) # Change year to number of years old
-    cur_row[2] = make_index(cur_row[2]) # Change make of car to number
+    cur_row[2] = cur_row[2] # Change make of car to number
     cur_row[3] = cur_row[3] # Change model of car to number
     cur_row[4] = condition_index(cur_row[4])# Condition
     cur_row[5] = cylinders_index(cur_row[5])# Cylinders
@@ -123,37 +123,6 @@ def regularize_data(cur_row):
     cur_row[13] = color_index(cur_row[13])# Color
     cur_row[14] = state_index(cur_row[14]) # State
     return cur_row
-
-def model_index(makeIndex, model):
-    if makeIndex == 0:
-        return acura(model)
-    if makeIndex == 1:
-        return alfa_romeo(model)
-    if makeIndex == 2:
-        return aston_martin(model)
-    if makeIndex == 3:
-        return audi(model)
-    if makeIndex == 4:
-        return bmw(model)
-    if makeIndex == 5:
-        return buick(model)
-    else:
-        return "Model"
-
-def model_list():
-    models = []
-    trimmed_models = []
-    for i in range(43):
-        models.append([])
-        trimmed_models.append([])
-
-    with open('vehicles_clean.csv') as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=',')
-        for row in csvreader:
-            makeIndex = make_index(row[3].upper())
-            if makeIndex != -1:
-                if row[4] not in models[makeIndex]:
-                    models[makeIndex].append(row[4])
 
 
 def clean_clean_data():
