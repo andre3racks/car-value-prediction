@@ -6,7 +6,7 @@ from data.data_loader import get_splits
 from utils.plot import plot_2D
 import numpy as np
 
-def k_means_cluster(data, k, max_iter=300, alg='auto'):
+def k_means_cluster(data, k, max_iter=300, alg='auto', weighted_average=False):
     
     model = KMeans(n_clusters=k, max_iter=max_iter, algorithm=alg)
     # fit model to X_train and predict the clusters for finding average price for clusters
@@ -15,25 +15,39 @@ def k_means_cluster(data, k, max_iter=300, alg='auto'):
     # predict X_test clusters for test performance
     print("predicting test data for k means")
     testing_cluster_ass = model.predict(data['X_test'])
-
     cluster_locations = model.cluster_centers_
-    # list of examples and their prices indexed by their assigned cluster
-    # print("listing examples")
-    # list_prices_of_categories = list_examples_per_cluster(training_cluster_ass, data)
-    print("listing weighted examples")
-    w_list_prices_of_categories = list_weighted_examples_per_cluster(training_cluster_ass, data, cluster_locations)
-    assert len(w_list_prices_of_categories) == k, "list prices contains too many lists"
-    # find average price of each cluster from list
-    # print("finding averages")
-    # average_prices_of_categories = average_price_of_clusters(list_prices_of_categories)
-    print("finding weighted averages")
-    w_avg_prices_of_categories = weighted_avg_price_of_clusters(w_list_prices_of_categories)
-    # print(average_prices_of_categories)
-    assert len(w_avg_prices_of_categories) == k, "average prices contains too many values"
-    # find average percentage difference between cluster average prices and test/train labels
-    print("calculating weighted error")
-    train_err = find_err(w_avg_prices_of_categories, training_cluster_ass, data['Y_train'])
-    test_err = find_err(w_avg_prices_of_categories, testing_cluster_ass, data['Y_test'])
+
+    train_err = 0
+    test_err = 0
+
+    if weighted_average:
+        print("listing weighted examples")
+        w_list_prices_of_categories = list_weighted_examples_per_cluster(training_cluster_ass, data, cluster_locations)
+        assert len(w_list_prices_of_categories) == k, "list prices contains too many lists"
+
+        print("finding weighted averages")
+        w_avg_prices_of_categories = weighted_avg_price_of_clusters(w_list_prices_of_categories)
+        assert len(w_avg_prices_of_categories) == k, "average prices contains too many values"
+
+        print("calculating weighted error")
+        train_err = find_err(w_avg_prices_of_categories, training_cluster_ass, data['Y_train'])
+        test_err = find_err(w_avg_prices_of_categories, testing_cluster_ass, data['Y_test'])
+
+    else:
+        # list of examples and their prices indexed by their assigned cluster
+        print("listing examples")
+        list_prices_of_categories = list_examples_per_cluster(training_cluster_ass, data)
+        assert len(list_prices_of_categories) == k, "list prices contains too many lists"
+
+        # find average price of each cluster from list
+        # print("finding averages")
+        average_prices_of_categories = average_price_of_clusters(list_prices_of_categories)
+        assert len(average_prices_of_categories) == k, "average prices contains too many values"
+
+        # find average percentage difference between cluster average prices and test/train labels
+        train_err = find_err(average_prices_of_categories, training_cluster_ass, data['Y_train'])
+        test_err = find_err(average_prices_of_categories, testing_cluster_ass, data['Y_test'])
+    
 
     scores = {}
 
@@ -41,7 +55,7 @@ def k_means_cluster(data, k, max_iter=300, alg='auto'):
     scores['train'] = train_err
 
     return scores
-    
+
 
 def list_examples_per_cluster(training_cluster_ass, data):
 
