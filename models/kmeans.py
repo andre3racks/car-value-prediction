@@ -21,14 +21,17 @@ def k_means_cluster(data, k, max_iter=300, alg='auto', weighted_average=False):
     test_err = 0
 
     if weighted_average:
+        # list of examples and their prices indexed by their assigned cluster
         print("listing weighted examples")
         w_list_prices_of_categories = list_weighted_examples_per_cluster(training_cluster_ass, data, cluster_locations)
         assert len(w_list_prices_of_categories) == k, "list prices contains too many lists"
-
+        
+        # find average weighted price of each cluster from list
         print("finding weighted averages")
         w_avg_prices_of_categories = weighted_avg_price_of_clusters(w_list_prices_of_categories)
         assert len(w_avg_prices_of_categories) == k, "average prices contains too many values"
 
+        # find average percentage difference between cluster average prices and test/train labels
         print("calculating weighted error")
         train_err = find_err(w_avg_prices_of_categories, training_cluster_ass, data['Y_train'])
         test_err = find_err(w_avg_prices_of_categories, testing_cluster_ass, data['Y_test'])
@@ -77,24 +80,22 @@ def list_weighted_examples_per_cluster(cluster_ass, data, cluster_centers):
     # append prices and corresponding weights as tuple
     list_prices_of_categories = {}
     for i in range(len(cluster_ass)):
-        # calculate weight (1/euclidian distance squared)
-        example_loc = data['X_train'].iloc[i]
-        example_loc = np.asarray(example_loc).astype(np.float)
-        centroid_loc = cluster_centers[cluster_ass[i]]
 
-        # print("example_loc: {}, centroid_loc: {}".format(example_loc, centroid_loc))
+        # calculate weight (1/l2 norm)
+        example_loc = data['X_train'].iloc[i]
+        centroid_loc = cluster_centers[cluster_ass[i]]
 
         dist = np.linalg.norm(centroid_loc-example_loc)
         weight = 0
 
         if dist == 0:
             # idk what to do here ...
-            weight = 1000
+            weight = 100000
         else:
             weight = 1/dist
         
 
-        price = np.asarray(data['Y_train'].iloc[i]).astype(np.float)
+        price = np.asarray(data['Y_train'].iloc[i])
     
         price_and_weight = {}
         price_and_weight['price'] = price
@@ -124,7 +125,10 @@ def weighted_avg_price_of_clusters(list_prices_of_categories):
             price = value['price']
             # print("weight: {}, price: {}".format(type(weight), type(price)))
             sum_of_weights += weight
+            prev_sum = weighted_sum
             weighted_sum += price*weight
+
+            assert weighted_sum >= prev_sum, "overflow error finding weighted average of cluster prices."
 
         list_prices_of_categories[keys] = weighted_sum/sum_of_weights
 
@@ -141,7 +145,6 @@ def average_price_of_clusters(list_prices_of_categories):
         for value in values:
             val = int(value)
             current_average = prev_average*(num_exs_so_far-1)/(num_exs_so_far) + val/(num_exs_so_far)
-            assert current_average >= 0, "Negative error in kmeans while finding average price for clusters"
             num_exs_so_far += 1
             prev_average = current_average
 
@@ -166,7 +169,7 @@ def find_err(average_prices_of_categories, cluster_assignments, labels):
         # print("actual: {}; estimation: {}".format(actual_price, cluster_price))
 
         # find percentage off loss
-        difference = abs(cluster_price-actual_price)
+        difference = abs(cluster_price-actual_price)/cluster_price
 
         current_average = prev_avg*(num_exs_so_far-1)/(num_exs_so_far) + difference/num_exs_so_far
         prev_avg = current_average
@@ -176,26 +179,10 @@ def find_err(average_prices_of_categories, cluster_assignments, labels):
     return current_average
 
 
-def progress_report(data):
-    ks = []
-    test_errs = []
-    train_errs = []
-
-    for k in range(10, 610, 50):
-        scores = k_means_cluster(data, k, max_iter=300)
-        ks.append(k)
-        test_errs.append(scores['test'])
-        train_errs.append(scores['train'])
-    
-    plot_2D("kmeans performance varying K", "K", "Error in dollars", test_errs, train_errs, ks)
-
-
-
 # debug purposes
 if __name__ == "__main__":
     data = get_splits("../data/vehicles_clean_encoded.csv", 0.2)
     if data is not None:
         # print(data['X_train'])
         # print(k_means_cluster(data, 500, max_iter=300))
-        progress_report(data)
-    pass
+        print(k_means_cluster(data, 30, weighted_average=True))
