@@ -1,51 +1,46 @@
 import pandas as pd
 import csv
 import numpy as np
+import re
 
 from normalizers.make_and_model_cleaner import MakeAndModelNormalizer
-from encoders.one_hot_encoder import OneHotEncoder
 
 def price_regularize(price):
     return price
 
 def regularize_year(year):
     if year == "" or year == None:
-        return -1
+        return np.nan
     else:
         return 2020-int(year)
 
-def make_index(make):
-    if make == "" or make == None:
-        return -1
-    else:
-        makeUpper = make.upper()
-        makes = ['ACURA', 'ALFA-ROMEO', 'ASTON-MARTIN', 'AUDI', 'BMW', 'BUICK', 'CADILLAC', 'CHEVROLET', 'CHRYSLER', 'DATSUN', 'DODGE', 'FERRARI', 'FIAT', 'FORD', 'GMC', 'HARLEY-DAVIDSON', 'HENNESSEY', 'HONDA', 'HYUNDAI', 'INFINITI', 'JAGUAR', 'JEEP', 'KIA', 'LAND ROVER', 'LEXUS', 'LINCOLN', 'MAZDA', 'MERCEDES-BENZ', 'MERCURY', 'MINI', 'MITSUBISHI', 'MORGAN', 'NISSAN', 'PONTIAC', 'PORCHE', 'RAM', 'ROVER', 'SATURN', 'SUBARU', 'TESLA', 'TOYOTA', 'VOLKSWAGEN', 'VOLVO']
-        return makes.index(makeUpper)
-
 def condition_index(condition):
     conditionUpper = condition.upper()
-    conditions = ['NEW', 'LIKE NEW', 'EXCELLENT', 'GOOD', 'FAIR', 'SALVAGE']
-    if conditionUpper in conditions:
-        return conditionUpper
-    else:
-        return -1
+    # New and Like New => 4, Excellent => 3, Good => 2, Fair => 1, Salvage => 0
+    conditions = ['SALVAGE', 'FAIR', 'GOOD', 'EXCELLENT', 'NEW']
+    
+    for index, condition in enumerate(conditions):
+        if condition in conditionUpper:
+            return index
+    
+    return np.nan
 
 def cylinders_index(cylinder):
     cylinderUpper = cylinder.upper()
-    cylinders = ['3 CYLINDERS', '4 CYLINDERS', '5 CYLINDERS', '6 CYLINDERS', '8 CYLINDERS', '10 CYLINDERS', '12 CYLINDERS', 'OTHER']
+    cylinders = ['3 CYLINDERS', '4 CYLINDERS', '5 CYLINDERS', '6 CYLINDERS', '8 CYLINDERS', '10 CYLINDERS', '12 CYLINDERS']
     if cylinderUpper in cylinders:
-        return cylinderUpper
+        return int(re.sub(r'\D', '', cylinderUpper))
     else:
-        return -1
+        return np.nan
 
 
 def gas_index(gas):
     gasUpper = gas.upper()
-    gasTypes = ['GAS', 'DIESEL', 'OTHER', 'ELECTRIC', 'HYBRID']
+    gasTypes = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
     if gasUpper in gasTypes:
         return gasUpper
     else:
-        return -1
+        return np.nan
 
 def odometer_regularize(odometer):
     return odometer
@@ -56,15 +51,15 @@ def title_index(title):
     if titleUpper in titles:
         return titleUpper
     else:
-        return -1
+        return np.nan
 
 def transmission_index(transmission):
     transmissionUpper = transmission.upper()
-    transmissions = ['MANUAL', 'AUTOMATIC', 'OTHER']
+    transmissions = ['MANUAL', 'AUTOMATIC']
     if transmissionUpper in transmissions:
         return transmissionUpper
     else:
-        return -1
+        return np.nan
 
 def drive_index(drive):
     driveUpper = drive.upper()
@@ -72,7 +67,7 @@ def drive_index(drive):
     if driveUpper in drives:
         return driveUpper
     else:
-        return -1
+        return np.nan
 
 def size_index(size):
     sizeUpper = size.upper()
@@ -80,15 +75,17 @@ def size_index(size):
     if sizeUpper in sizes:
         return sizeUpper
     else:
-        return -1
+        return np.nan
 
 def type_index(typee):
     typeUpper = typee.upper()
-    types = ['HATCHBACK', 'PICKUP', 'SUV', 'SEDAN', 'TRUCK', 'WAGON', 'VAN', 'COUPE', 'CONVERTIBLE', 'OTHER', 'OFFROAD', 'MINI-VAN', 'BUS']
+    types = ['HATCHBACK', 'PICKUP', 'SUV', 'SEDAN', 'TRUCK', 'WAGON', 'VAN', 'COUPE', 'CONVERTIBLE', 'OFFROAD', 'MINI-VAN', 'BUS']
     if typeUpper in types:
+        if typeUpper in ['TRUCK', 'PICKUP']:
+            return 'TRUCK'
         return typeUpper
     else:
-        return -1
+        return np.nan
 
 def color_index(color):
     colorUpper = color.upper()
@@ -96,7 +93,7 @@ def color_index(color):
     if colorUpper in colors:
         return colorUpper
     else:
-        return -1
+        return np.nan
 
 def state_index(state):
     upperState = state.upper()
@@ -104,7 +101,7 @@ def state_index(state):
     if upperState in states:
         return upperState
     else:
-        return -1
+        return np.nan
 
 def regularize_data(cur_row):
     cur_row[0] = price_regularize(cur_row[0])# Price
@@ -173,18 +170,36 @@ def model_cleanup():
     df.to_csv('vehicles_cleaner.csv')
     return df
 
+def remove_invalid_rows(df):
+    for column in df.columns:
+        df = df[df[column].notna()]
+    return df
+
+def scale_data(df):
+    # Divide by max. Get values between 0 and 1
+    df /= df.max()
+    return df
+
+
+def save_subset(df, filename, columns=None):
+    if columns:
+        df = df[columns]
+    df = remove_invalid_rows(df)
+    
+    #One hot discrete columns
+    df = pd.get_dummies(df)
+    df = scale_data(df)
+
+    df.to_csv(filename)
 
 def main():
     clean_data = load_data_csv()
     save_csv(clean_data)
     df = model_cleanup()
-
-    # Drop NaN, -1, 'other' values first
-    #This is the One Hot encoding. Does all string valued columns. Should probably Drop NaN, -1, 
-    # 'other' values and amke things scalar that we want to be scalar
-    # http://queirozf.com/entries/one-hot-encoding-a-feature-on-a-pandas-dataframe-an-example
-    df = pd.get_dummies(df)
-
-    df.to_csv('vehicles_clean_encoded.csv')
+    
+    # Create the 3 subsets
+    save_subset(df, 'full_encoded.csv')
+    save_subset(df, 'autotrader_encoded.csv', columns=['price', 'year', 'manufacturer', 'model', 'condition', 'odometer'])
+    save_subset(df, 'mechanical_encoded.csv', columns=['price', 'year', 'cylinders', 'fuel', 'odometer', 'transmission', 'drive', 'type', 'paint_color'])
 
 main()
